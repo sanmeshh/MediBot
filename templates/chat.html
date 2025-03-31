@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medibot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="chat-container">
+        <h2>Medibot</h2>
+        <div id="chat-box"></div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Enter your query" />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userText = $("#user-input").val().trim();
+            if (userText === "") return;
+
+            $("#chat-box").append('<div class="message user-msg"><strong>You:</strong> ' + userText + '</div>');
+            $("#user-input").val("");
+
+            $.ajax({
+                url: "/get",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ message: userText }),
+                success: function(data) {
+                    $("#chat-box").append('<div class="message bot-msg"><strong>Bot:</strong> ' + data.response + '</div>');
+                    $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
